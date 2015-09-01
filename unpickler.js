@@ -334,7 +334,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
     };
     
     unpickler.has_tag = function (obj, tag) {
-        if ((typeof obj == 'object') &&
+        if ((typeof obj == 'object') && (obj !== null) &&
                 (obj[tag] !== undefined)) {
             return true;
         } else {
