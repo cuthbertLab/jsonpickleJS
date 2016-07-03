@@ -216,7 +216,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
             var state = this._restore(obj[tags.STATE]);
             instance.__setstate__(state);
         } else {
-            instance = this._restore(obj[tags.STATE]);
+            instance = this._restore_object_instance_variables(obj[tags.STATE], instance);
         }
         return instance;
     };
