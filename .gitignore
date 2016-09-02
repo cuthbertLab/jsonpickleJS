@@ -1,5 +1,7 @@
 *.py[cod]
 
+node_modules/
+
 # OSX
 .DS_Store
 
@@ -10,7 +12,6 @@
 *.egg
 *.egg-info
 dist
-build
 eggs
 parts
 bin

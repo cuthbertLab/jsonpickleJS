@@ -1,0 +1,36 @@
+{
+  "name": "jsonpicklejs",
+  "version": "1.0.0",
+  "description": "Javascript reinterpretation of Python jsonpickle to allow reading and (to a lesser extent) writing JSON objects",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cuthbertLab/jsonpickleJS.git"
+  },
+  "keywords": [
+    "json",
+    "pickle",
+    "python",
+    "jsonpickle"
+  ],
+  "author": "Michael Scott Cuthbert",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/cuthbertLab/jsonpickleJS/issues"
+  },
+  "homepage": "https://github.com/cuthbertLab/jsonpickleJS#readme",
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^5.0.3",
+    "eslint-plugin-import": "^1.14.0",
+    "grunt": "^1.0.1",
+    "grunt-bump": "^0.8.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-rollup": "^0.8.0"
+  }
+}
