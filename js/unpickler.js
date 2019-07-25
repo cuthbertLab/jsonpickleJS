@@ -1,8 +1,7 @@
 /**
  * jsonPickle/javascript/unpickler -- Conversion from music21p jsonpickle streams
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-14, 19, Michael Scott Cuthbert and cuthbertLab
  *
  * usage:
  *
@@ -10,13 +9,11 @@
  *
  */
 
-import { util } from './util';
+import * as util from './util';
 import { handlers } from './handlers';
 import { tags } from './tags';
 
-export const unpickler = {};
-
-unpickler.decode = function decode(string, user_handlers, options) {
+export function decode(string, user_handlers, options) {
     const params = {
         keys: false,
         safe: false,
@@ -39,13 +36,13 @@ unpickler.decode = function decode(string, user_handlers, options) {
             backend: params.backend,
             safe: params.safe,
         };
-        context = new unpickler.Unpickler(unpickler_options, use_handlers);
+        context = new Unpickler(unpickler_options, use_handlers);
     } else {
         context = params.context;
     }
     const jsonObj = params.backend.parse(string);
     return context.restore(jsonObj, params.reset);
-};
+}
 
 export class Unpickler {
     constructor(options, handlers) {
@@ -55,6 +52,7 @@ export class Unpickler {
         };
         util.merge(params, options);
         this.keys = params.keys;
+        // noinspection JSUnusedGlobalSymbols
         this.safe = params.safe;
 
         this.handlers = handlers;
@@ -65,6 +63,7 @@ export class Unpickler {
         this._namestack = [];
 
         // Maps objects to their index in the _objs list
+        // noinspection JSUnusedGlobalSymbols
         this._obj_to_idx = {};
         this._objs = [];
     }
@@ -89,7 +88,6 @@ export class Unpickler {
     }
 
     _restore(obj) {
-        const has_tag = unpickler.has_tag;
         let restoreMeth = (obj) => obj;
 
         if (has_tag(obj, tags.ID)) {
@@ -120,8 +118,9 @@ export class Unpickler {
         return this._objs[obj[tags.ID]];
     }
 
+    // noinspection JSMethodCanBeStatic
     _restore_type(obj) {
-        const typeref = unpickler.loadclass(obj[tags.TYPE]);
+        const typeref = loadclass(obj[tags.TYPE]);
         if (typeref === undefined) {
             return obj;
         } else {
@@ -134,23 +133,32 @@ export class Unpickler {
         const handler = this.handlers[class_name];
         if (handler !== undefined && handler.restore !== undefined) {
             const instance = handler.restore(obj);
-            instance[tags.PY_CLASS] = class_name;
+            try {
+                instance[tags.PY_CLASS] = class_name;
+            } catch {
+                // no worries -- might be a number or string that can't attach class.
+            }
             return this._mkref(instance);
         } else {
-            const cls = unpickler.loadclass(class_name);
+            const cls = loadclass(class_name);
             if (cls === undefined) {
                 obj[tags.PY_CLASS] = class_name;
                 return this._mkref(obj);
             }
             const instance = this._restore_object_instance(obj, cls);
             instance[tags.PY_CLASS] = class_name;
+
+            // noinspection JSUnresolvedVariable
             if (handler !== undefined && handler.post_restore !== undefined) {
+                // noinspection JSUnresolvedFunction
                 return handler.post_restore(instance);
             } else {
                 return instance;
             }
         }
     }
+
+    // noinspection JSUnusedGlobalSymbols
     _loadfactory(obj) {
         const default_factory = obj.default_factory;
         if (default_factory === undefined) {
@@ -164,18 +172,17 @@ export class Unpickler {
 
     _restore_object_instance(obj, cls) {
         // var factory = this._loadfactory(obj);
-        let args = unpickler.getargs(obj);
+        let args = getargs(obj);
         if (args.length > 0) {
             args = this._restore(args);
         }
         // not using factory... does not seem to apply to JS
-        const instance = unpickler.construct(cls, args);
+        const instance = construct(cls, args);
         this._mkref(instance);
         return this._restore_object_instance_variables(obj, instance);
     }
 
     _restore_object_instance_variables(obj, instance) {
-        const has_tag = unpickler.has_tag;
         const restore_key = this._restore_key_fn();
         const keys = [];
         for (const k in obj) {
@@ -220,8 +227,10 @@ export class Unpickler {
 
     _restore_state(obj, instance) {
         // only if the JS object implements __setstate__
+        // noinspection JSUnresolvedVariable
         if (instance.__setstate__ !== undefined) {
             const state = this._restore(obj[tags.STATE]);
+            // noinspection JSUnresolvedFunction
             instance.__setstate__(state);
         } else {
             instance = this._restore_object_instance_variables(obj[tags.STATE], instance);
@@ -288,12 +297,14 @@ export class Unpickler {
         if (this.keys) {
             return (key) => {
                 if (key.indexOf(tags.JSON_KEY) === 0) {
-                    key = unpickler.decode(key.slice(tags.JSON_KEY.length),
-                            this.handlers,
-                            { context: this,
-                              keys: this.keys,
-                              reset: false,
-                            }
+                    key = decode(
+                        key.slice(tags.JSON_KEY.length),
+                        this.handlers,
+                        {
+                            context: this,
+                            keys: this.keys,
+                            reset: false,
+                        }
                     );
                     return key;
                 } else {
@@ -305,35 +316,36 @@ export class Unpickler {
         }
     }
 
-//  _refname not needed...
+    //  _refname not needed...
+
     _mkref(obj) {
         // does not use id(obj) in javascript
         this._objs.push(obj);
         return obj;
     }
 }
-unpickler.Unpickler = Unpickler;
 
-
-unpickler.getargs = function getargs(obj) {
+export function getargs(obj) {
     const seq_list = obj[tags.SEQ];
     const obj_dict = obj[tags.OBJECT];
     if (seq_list === undefined || obj_dict === undefined) {
         return [];
     }
-    const typeref = unpickler.loadclass(obj_dict);
+    const typeref = loadclass(obj_dict);
     if (typeref === undefined) {
         return [];
     }
+    // noinspection JSUnresolvedVariable
     if (typeref._fields !== undefined) {
+        // noinspection JSUnresolvedVariable
         if (typeref._fields.length === seq_list.length) {
             return seq_list;
         }
     }
     return [];
-};
+}
 
-unpickler.loadclass = function loadclass(module_and_name) {
+export function loadclass(module_and_name) {
     const main_check = '__main__.';
     if (module_and_name.indexOf(main_check) === 0) {
         module_and_name = module_and_name.slice(main_check.length);
@@ -348,22 +360,18 @@ unpickler.loadclass = function loadclass(module_and_name) {
         }
     }
     return parent;
-};
+}
 
-unpickler.has_tag = function has_tag(obj, tag) {
-    if ((typeof obj === 'object') && (obj !== null) &&
-            (obj[tag] !== undefined)) {
-        return true;
-    } else {
-        return false;
-    }
-};
+export function has_tag(obj, tag) {
+    return (typeof obj === 'object') && (obj !== null)
+        && (obj[tag] !== undefined);
+}
 
 // http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-unpickler.construct = function construct(constructor, args) {
+export function construct(constructor, args) {
     function F() {
         return constructor.apply(this, args);
     }
     F.prototype = constructor.prototype;
     return new F();
-};
+}

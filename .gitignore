@@ -41,3 +41,6 @@ nosetests.xml
 .project
 .pydevproject
 /.settings
+
+# Jetbrains
+.idea/

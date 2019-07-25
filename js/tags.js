@@ -10,9 +10,18 @@ export const tags = {
     STATE: 'py/state',
     JSON_KEY: 'json://',
 };
-tags.RESERVED = [tags.ID, tags.OBJECT,
-                 tags.TYPE, tags.REPR,
-                 tags.REF, tags.TUPLE,
-                 tags.SET, tags.SEQ,
-                 tags.STATE, tags.JSON_KEY];
+
+tags.RESERVED = [
+    tags.ID,
+    tags.OBJECT,
+    tags.TYPE,
+    tags.REPR,
+    tags.REF,
+    tags.TUPLE,
+    tags.SET,
+    tags.SEQ,
+    tags.STATE,
+    tags.JSON_KEY,
+];
+
 tags.PY_CLASS = '_py_class';

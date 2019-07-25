@@ -1,10 +1,8 @@
-import { util } from './util';
+import * as util from './util';
 import { handlers } from './handlers';
 import { tags } from './tags';
 
-export const pickler = {};
-
-pickler.encode = function encode(value, options) {
+export function encode(value, options) {
     const params = {
         unpicklable: false,
         make_refs: true,
@@ -24,13 +22,13 @@ pickler.encode = function encode(value, options) {
             backend: params.backend,
             max_depth: params.max_depth,
         };
-        params.context = new pickler.Pickler(outparams);
+        params.context = new Pickler(outparams);
         const fixed_obj = params.context.flatten(value, params.reset);
         return JSON.stringify(fixed_obj);
     } else {
         return undefined;
     }
-};
+}
 
 export class Pickler {
     constructor(options) {
@@ -44,6 +42,8 @@ export class Pickler {
         util.merge(params, options);
         this.unpicklable = params.unpicklable;
         this.make_refs = params.make_refs;
+
+        // noinspection JSUnusedGlobalSymbols
         this.backend = params.backend;
         this.keys = params.keys;
         this._depth = -1;
@@ -72,19 +72,19 @@ export class Pickler {
         // console.log(found_id);
         if (found_id !== -1) {
             return false;
-//          if (this.unpicklable == false || this.make_refs == false) {
-//          return true;
-//          } else {
-//          return false;
-//          }
+        // if (this.unpicklable == false || this.make_refs == false) {
+        // return true;
+        // } else {
+        // return false;
+        // }
         }
         this._objs.push(obj);
         return true;
     }
     _get_id_in_objs(obj) {
         const objLength = this._objs.length;
-//      console.log('sought obj', obj);
-//      console.log('stored objs: ', this._objs);
+        // console.log('sought obj', obj);
+        // console.log('stored objs: ', this._objs);
         for (let i = 0; i < objLength; i++) {
             if (obj === this._objs[i]) {
                 return i;
@@ -92,11 +92,13 @@ export class Pickler {
         }
         return -1;
     }
+
     _getref(obj) {
         const wrap_obj =  {};
         wrap_obj[tags.ID] = this._get_id_in_objs(obj);
         return wrap_obj;
     }
+
     flatten(obj, reset) {
         if (reset === undefined) {
             reset = true;
@@ -105,25 +107,28 @@ export class Pickler {
             this.reset();
         }
         const flatOut = this._flatten(obj);
-        console.log(this._objs);
+        // console.log(this._objs);
         return flatOut;
     }
+
     _flatten(obj) {
         this._push();
         return this._pop(this._flatten_obj(obj));
     }
+
     _flatten_obj(obj) {
         this._seen.push(obj);
         const max_reached = (this._depth === this._max_depth);
         if (max_reached || (this.make_refs === false && this._get_id_in_objs(obj) !== -1)) {
             // no repr equivalent, use str;
-            return toString(obj);
+            return obj.toString();
         } else {
             const flattener = this._get_flattener(obj);
             // console.log(flattener);
             return flattener.call(this, obj);
         }
     }
+
     _list_recurse(obj) {
         const l = [];
         for (let i = 0; i < obj.length; i++) {
@@ -131,6 +136,7 @@ export class Pickler {
         }
         return l;
     }
+
     _get_flattener(obj) {
         if (util.is_primitive(obj)) {
             return obj => obj;
@@ -176,24 +182,27 @@ export class Pickler {
         console.log('no flattener for ', obj, ' of type ', typeof obj);
         return undefined;
     }
+
     _ref_obj_instance(obj) {
         if (this._mkref(obj)) {
             return this._flatten_obj_instance(obj);
         }
         return this._getref(obj);
     }
+
     _flatten_obj_instance(obj) {
         const data = {};
         const has_class = (obj[tags.PY_CLASS] !== undefined); // ? or ...
         const has_dict = true;
         // const has_slots = false;
+        // noinspection JSUnresolvedVariable
         const has_getstate = (obj.__getstate__ !== undefined);
 
         if (has_class && util.is_module(obj) === false) {
-            const fullModuleName = pickler._getclassdetail(obj);
+            const fullModuleName = this._getclassdetail(obj);
             if (this.unpicklable) {
                 data[tags.OBJECT] = fullModuleName;
-                console.log(data);
+                // console.log(data);
             }
             const handler = handlers[fullModuleName];
             if (handler !== undefined) {
@@ -224,6 +233,7 @@ export class Pickler {
         // todo: is_noncomplex
         // todo: has_slots...
     }
+
     _flatten_dict_obj(obj, data) {
         if (data === undefined) {
             data = new obj.prototype.constructor();
@@ -247,7 +257,7 @@ export class Pickler {
     }
 
 
-//  _flatten_newstyle_with_slots
+    // _flatten_newstyle_with_slots
     _flatten_key_value_pair(k, v, data) {
         if (util.is_picklable(k, v) === false) {
             return data;
@@ -257,8 +267,9 @@ export class Pickler {
         return data;
     }
 
-//  pickler.Pickler.prototype._flatten_sequence_obj = function () {};
+    //  Pickler.prototype._flatten_sequence_obj = function () {};
     _getstate(obj, data) {
+        // noinspection JSUnresolvedFunction
         const state = this._flatten_obj(obj.__getstate__());
         if (this.unpicklable) {
             data[tags.STATE] = state;
@@ -268,11 +279,12 @@ export class Pickler {
         return data;
     }
 
-//  pickler._mktyperef = function (obj) {};
+    //  _mktyperef = function (obj) {};
+
+    // noinspection JSMethodCanBeStatic
     _getclassdetail(obj) {
         // just returns the Python class name
         return obj[tags.PY_CLASS];
     }
 }
-pickler.Pickler = Pickler;
 
