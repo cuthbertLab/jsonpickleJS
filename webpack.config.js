@@ -1,10 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
+const PACKAGE = require('./package.json');
+const version = PACKAGE.version;
+const date_now = new Date().toISOString().replace(/T.*/, '');
 
 const BANNER = `
-jsonpickle.js <%= pkg.version %> built on
-<%= grunt.template.today("yyyy-mm-dd") %>.
-Copyright (c) 2013-<%= grunt.template.today("yyyy") %> Michael Scott Cuthbert and cuthbertLab.
+jsonpickle.js ${version} built on ${date_now}
+Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab. BSD License
 
 http://github.com/cuthbertLab/jsonpickleJS
 `;
@@ -41,6 +43,6 @@ module.exports = {
         ],
     },
     plugins: [
-        // new webpack.BannerPlugin({banner: BANNER}),
+        new webpack.BannerPlugin({banner: BANNER}),
     ],
 };

@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2014-19 Michael Scott Cuthbert and cuthbertLab
  */
-import '@babel/polyfill';
+import 'regenerator-runtime/runtime';
 
 import * as unpickler from './unpickler.js';
 import * as pickler from './pickler.js';
