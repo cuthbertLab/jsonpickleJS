@@ -350,7 +350,14 @@ export function loadclass(module_and_name) {
     if (module_and_name.indexOf(main_check) === 0) {
         module_and_name = module_and_name.slice(main_check.length);
     }
-    let parent = window;
+    let parent;
+    if (typeof globalThis !== 'undefined') {
+	parent = globalThis;
+    } else if (typeof window !== 'undefined') {
+	parent = window;
+    } else if (typeof global !== 'undefined') {
+	parent = global;
+    }
     const module_class_split = module_and_name.split('.');
     for (let i = 0; i < module_class_split.length; i++) {
         const this_module_or_class = module_class_split[i];
