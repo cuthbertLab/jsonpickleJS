@@ -4,7 +4,7 @@ jsonpickleJS
 Javascript reinterpretation of Python jsonpickle to allow reading and (to a lesser extent) 
 writing JSON objects
 
-Copyright (c) 2014 Michael Scott Cuthbert and cuthbertLab.
+Copyright © 2014-25 Michael Scott Asato Cuthbert.
 Released under the BSD (3-clause) license. See LICENSE.
 
 Python to Javascript and Back
@@ -72,3 +72,16 @@ the ``data-main`` attribute to ``jsonpickleJS/main`` (no ``.js``).  Then call
 See the cuthbertLab/music21 and cuthbertLab/music21j projects and especially the ``.show('vexflow')``
 component for an example of how jsonpickleJS can be extremely useful for projects that have
 parallel data structures between Python and Javascript.
+
+Building
+========
+Run once:
+```
+% npm install
+```
+
+Then:
+
+```
+% npm run build
+```
