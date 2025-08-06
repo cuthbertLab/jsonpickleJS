@@ -1,31 +1,38 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns = "http://www.w3.org/1999/xhtml">
-<head><meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsonpickleJS Test</title>
 </head>
 <body>
-See Console for output...
-<script type="text/javascript" src="../build/jsonpickle.min.js"></script>
-<script type="text/javascript">
-const tags = jsonpickle.tags;
+   <h1>jsonpickleJS Test</h1>
+    <p>See the browser console for output.</p>
 
-const Thing = function (x) {
-   this.x = x;
-   this[tags.PY_CLASS] = '__main__.Thing';
-   this.subThing = undefined;
-   this.subList = [];
-}
+    <script src="../build/jsonpickle.min.js"></script>
+    <script>
+        const tags = jsonpickle.tags;
 
-firstThing = new Thing(5);
-secondThing = new Thing('hello');
-firstThing.subList = [5, 'a', secondThing];
-secondThing.subThing = firstThing;
-firstThing.subThing = secondThing;
-firstThing.subThing2 = secondThing;
-encodeOutput = jsonpickle.encode(firstThing);
-console.log(encodeOutput);
+        Thing = function(x) {
+            this.x = x;
+            this[tags.PY_CLASS] = '__main__.Thing';
+            this.subThing = undefined;
+            this.subList = [];
+        }
 
-original = jsonpickle.decode(encodeOutput);
-console.log(original);
-</script>
+        const firstThing = new Thing(5);
+        const secondThing = new Thing('hello');
+
+        firstThing.subList = [5, 'a', secondThing];
+        secondThing.subThing = firstThing;
+        firstThing.subThing = secondThing;
+        firstThing.subThing2 = secondThing;
+
+        const encodeOutput = jsonpickle.encode(firstThing);
+        console.log('Encoded:', encodeOutput);
+
+        const original = jsonpickle.decode(encodeOutput);
+        console.log('Decoded:', original);
+        // appears that there is a ref counting bug here.
+    </script>
 </body>
 </html>

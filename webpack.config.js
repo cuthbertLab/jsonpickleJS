@@ -1,17 +1,22 @@
-const path = require('path');
-const webpack = require('webpack');
-const PACKAGE = require('./package.json');
+import path from 'path';
+import webpack from 'webpack';
+import ESLintPlugin from 'eslint-webpack-plugin';
+
+import { readPackageUp } from 'read-pkg-up';
+
+const { packageJson: PACKAGE, path: packagePath } = await readPackageUp();
+const __dirname = path.dirname(packagePath);
 const version = PACKAGE.version;
 const date_now = new Date().toISOString().replace(/T.*/, '');
 
 const BANNER = `
 jsonpickle.js ${version} built on ${date_now}
-Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab. BSD License
+Copyright (c) 2013–2025 Michael Scott Asato Cuthbert. BSD License
 
 http://github.com/cuthbertLab/jsonpickleJS
 `;
 
-module.exports = {
+export default {
     entry: './js/index.js',
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -22,8 +27,6 @@ module.exports = {
     },
     mode: 'production',
     devtool: 'source-map',
-    // mode: 'development',
-    // devtool: 'inline-source-map',
     module: {
         rules: [
             {
@@ -33,16 +36,18 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: ['@babel/preset-env'],
-                        plugins: [
-                            // '@babel/transform-object-assign',
-                            // '@babel/proposal-export-namespace-from',
-                        ],
+                        plugins: [],
                     },
                 }],
             },
         ],
     },
     plugins: [
-        new webpack.BannerPlugin({banner: BANNER}),
+        new webpack.BannerPlugin({ banner: BANNER }),
+        new ESLintPlugin({
+            extensions: ['js'],
+            exclude: ['node_modules', 'bower_components', 'soundfont', 'soundfonts'],
+            failOnError: false,
+        }),
     ],
 };

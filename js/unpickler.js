@@ -9,9 +9,9 @@
  *
  */
 
-import * as util from './util';
-import { handlers } from './handlers';
-import { tags } from './tags';
+import * as util from './util.js';
+import { handlers } from './handlers.js';
+import { tags } from './tags.js';
 
 export function decode(string, user_handlers, options) {
     const params = {
@@ -135,7 +135,7 @@ export class Unpickler {
             const instance = handler.restore(obj);
             try {
                 instance[tags.PY_CLASS] = class_name;
-            } catch {
+            } catch (_e) {
                 // no worries -- might be a number or string that can't attach class.
             }
             return this._mkref(instance);
@@ -250,6 +250,7 @@ export class Unpickler {
         parent.push(...children);
         return parent;
     }
+
     _restore_tuple(obj) {
         // JS having no difference between list, tuple, set -- returns Array
         const children = [];
@@ -352,11 +353,12 @@ export function loadclass(module_and_name) {
     }
     let parent;
     if (typeof globalThis !== 'undefined') {
-	parent = globalThis;
+        parent = globalThis;
     } else if (typeof window !== 'undefined') {
-	parent = window;
+        parent = window;
     } else if (typeof global !== 'undefined') {
-	parent = global;
+        // eslint-disable-next-line no-undef
+        parent = global;
     }
     const module_class_split = module_and_name.split('.');
     for (let i = 0; i < module_class_split.length; i++) {
