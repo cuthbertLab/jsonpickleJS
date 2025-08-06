@@ -1,14 +1,19 @@
-jsonpickleJS
-============
+# jsonpickleJS
 
 Javascript reinterpretation of Python jsonpickle to allow reading and (to a lesser extent) 
 writing JSON objects
 
-Copyright (c) 2014 Michael Scott Cuthbert and cuthbertLab.
+Copyright © 2014-25 Michael Scott Asato Cuthbert.
 Released under the BSD (3-clause) license. See LICENSE.
 
-Python to Javascript and Back
-==============================
+# Pre-class-based system (Closing down)
+
+Note for 2025+: This system depends on legacy style functions that behave like objects.
+To use with modern Javascript you will need to assign all classes to globalThis (window, global).
+For this reason, v1.2 will be the last version of jsonpickleJS.  Using custom decoders in JSON.parse
+is probably the best solution going forward in the modern world.
+
+# Python to Javascript and Back
 Python has a remarkable number of ways (for a language that believes there's only one way to do it)
 to transfer data between itself and Javascript, most obviously with the 
 ``json.dump()``/``json.dumps()`` calls, which work well on specifically created data, especially
@@ -31,22 +36,21 @@ namespace, such as ``window``, in the Javascript.  For instance, if you have a c
 ``window.myobject.Thing`` in Javascript. The object, and any subobjects, will be created as closely
 as possible in Javascript.
 
-The reverse is also possible, with some caveats. Since Javascript doesn't (until ECMAScript 6) have
-the concept of named classes, each object will need to have a marker somewhere on it saying what
+The reverse is also possible, with some caveats. Since Javascript didn't (until ECMAScript 6) have
+the concept of named classes, each object needed to have a marker somewhere on it saying what
 Python object it should convert back to. The marker is 
 ``o[jsonpickle.tags.PY_CLASS] = 'fully.qualified.ClassName'``. 
 It may be possible in the future to use ``instanceof``
 through the entire Global namespace to figure out what something is, but that seems rather dangerous
 and inefficient (A project for later). 
 
-Limitations
-===========
+# Limitations
 Remember that Javascript does not have tuples, so all tuple objects are changed to lists.
+
 Namedtuples behave the same way, I believe. Dicts and Objects are identical in Javascript (both
 a blessing and a curse).
 
-Security
-========
+# Security
 Pickle, jsonpickle, and jsonpickleJS all raise important security considerations you must be
 aware of. You will be loading data directly into Python or Javascript with no checks on what the
 data contains. Only load data you have personally produced if you want to be safe.  In Javascript,
@@ -60,15 +64,68 @@ data, but anyone with JS programming experience can inject other data into your 
 Be safe: be cautious going from Python to Javascript and NEVER accept Javascript-produced
 jsonpickle data from the net into your Python program in any sort of open environment.
 
-Usage
-=====
-See the source code of: testUnpickle.html to see how to use it. JsonpickleJS follows the AMD
-moduleloader standard, so set the ``src=""`` attribute in the ``<script>`` to an AMD loader
-such as ``//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js`` 
-(or the included local version in ``jsonpickleJS/ext/require/require.js``) and 
-the ``data-main`` attribute to ``jsonpickleJS/main`` (no ``.js``).  Then call 
-``var o = jsonpickle.decode(jsonStr)`` to get the Python object back as a JS object named ``o``.
+# Usage
 
-See the cuthbertLab/music21 and cuthbertLab/music21j projects and especially the ``.show('vexflow')``
-component for an example of how jsonpickleJS can be extremely useful for projects that have
-parallel data structures between Python and Javascript.
+You can use `jsonpickleJS` in modern JavaScript environments with either 
+ES Modules or traditional `<script>` tags.
+
+---
+
+### ES Module (Modern usage)
+
+```js
+// be sure jsonpickle is in your package.json and installed.
+
+// # in python:
+// import jsonpickle
+// jsonStr = jsonpickle.encode(my_object)
+
+import jsonpickle from 'jsonpickle';
+
+const obj = jsonpickle.decode(jsonStr);
+// `obj` is now a JavaScript version of the original Python object
+// with proper classes.
+```
+
+---
+
+### `<script>` Tag (Legacy/global usage)
+
+```html
+<script src="build/jsonpickle.min.js"></script>
+<script>
+    const obj = jsonpickle.decode(jsonStr);
+    console.log(obj);
+</script>
+```
+
+This works without any build system. The `jsonpickle` global will be available automatically.
+
+
+### Example
+
+You can find a working example in [`testUnpickle.html`](./testUnpickle.html).
+
+
+### Background
+
+`jsonpickleJS` allows you to **decode Python-style JSON strings** into rich JavaScript objects. 
+It’s especially useful for projects that mirror data structures across Python and JavaScript.
+
+One real-world use case:  
+Older versions of [`music21`](https://github.com/cuthbertLab/music21) and 
+[`music21j`](https://github.com/cuthbertLab/music21j) use `jsonpickleJS` to render complex 
+musical objects in the browser — such as using `.show('vexflow')` in music21 to visualize 
+music sent from Python into JavaScript.
+
+# Building
+Run once:
+```
+% npm install
+```
+
+Then:
+
+```
+% npm run build
+```

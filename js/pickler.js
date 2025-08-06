@@ -1,6 +1,6 @@
-import * as util from './util';
-import { handlers } from './handlers';
-import { tags } from './tags';
+import * as util from './util.js';
+import { handlers } from './handlers.js';
+import { tags } from './tags.js';
 
 export function encode(value, options) {
     const params = {
@@ -51,6 +51,7 @@ export class Pickler {
         this._objs = [];
         this._seen = [];
     }
+
     reset() {
         this._objs = [];
         this._depth = -1;
@@ -60,6 +61,7 @@ export class Pickler {
     _push() {
         this._depth += 1;
     }
+
     _pop(value) {
         this._depth -= 1;
         if (this._depth === -1) {
@@ -67,6 +69,7 @@ export class Pickler {
         }
         return value;
     }
+
     _mkref(obj) {
         const found_id = this._get_id_in_objs(obj);
         // console.log(found_id);
@@ -81,6 +84,7 @@ export class Pickler {
         this._objs.push(obj);
         return true;
     }
+
     _get_id_in_objs(obj) {
         const objLength = this._objs.length;
         // console.log('sought obj', obj);

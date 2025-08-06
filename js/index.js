@@ -2,10 +2,8 @@
  * jsonpickleJS -- interpretation of python jsonpickle in Javascript
  * index.js -- main loader -- this should be the only file that most users care about.
  *
- * Copyright (c) 2014-19 Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2014-25 Michael Scott Cuthbert and cuthbertLab
  */
-import 'regenerator-runtime/runtime';
-
 import * as unpickler from './unpickler.js';
 import * as pickler from './pickler.js';
 import * as util from './util.js';
@@ -13,11 +11,17 @@ import { tags } from './tags.js';
 import { handlers } from './handlers.js';
 
 // noinspection JSUnusedGlobalSymbols
-export { pickler, unpickler, util, tags, handlers };
+export {
+    pickler, unpickler, util, tags, handlers, 
+};
 
 export function encode(
-    value, unpicklable=true, make_refs=true,
-    keys=false, max_depth, backend
+    value, 
+    unpicklable=true, 
+    make_refs=true,
+    keys=false, 
+    max_depth=undefined,
+    backend=undefined,
 ) {
     const options = {
         unpicklable,

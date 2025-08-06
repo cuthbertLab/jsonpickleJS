@@ -1,7 +1,8 @@
 {
   "name": "jsonpickle",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Javascript reinterpretation of Python jsonpickle to allow reading and (to a lesser extent) writing JSON objects",
+  "type": "module",
   "main": "build/jsonpickle.min.js",
   "scripts": {
     "build": "webpack",
@@ -25,19 +26,19 @@
   },
   "homepage": "https://github.com/cuthbertLab/jsonpickleJS#readme",
   "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/plugin-proposal-export-namespace-from": "^7.10.1",
-    "@babel/plugin-transform-object-assign": "^7.10.1",
-    "@babel/preset-env": "^7.10.2",
-    "babel-loader": "^8.1.0",
-    "core-js": "^3.6.5",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {
-    "regenerator-runtime": "^0.13.5"
+    "@babel/core": "^7.28.0",
+    "@babel/plugin-transform-export-namespace-from": "^7.27.1",
+    "@babel/plugin-transform-object-assign": "^7.27.1",
+    "@babel/preset-env": "^7.28.0",
+    "babel-loader": "^10.0.0",
+    "core-js": "^3.45.0",
+    "eslint": "^9.32.0",
+    "eslint-config-airbnb-extended": "^2.1.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-webpack-plugin": "^5.0.2",
+    "globals": "^16.3.0",
+    "read-pkg-up": "^10.1.0",
+    "webpack": "^5.101.0",
+    "webpack-cli": "^6.0.1"
   }
 }

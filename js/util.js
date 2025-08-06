@@ -1,4 +1,4 @@
-import { tags } from './tags';
+import { tags } from './tags.js';
 
 export function merge(destination, source) {
     if (source === undefined) {
