@@ -32,7 +32,8 @@
 
         const original = jsonpickle.decode(encodeOutput);
         console.log('Decoded:', original);
-        // appears that there is a ref counting bug here.
+        // appears that there is a ref counting bug in the subList which
+        // existed even in v.1.1 and before.
     </script>
 </body>
 </html>

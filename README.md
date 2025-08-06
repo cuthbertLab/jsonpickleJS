@@ -6,10 +6,12 @@ writing JSON objects
 Copyright © 2014-25 Michael Scott Asato Cuthbert.
 Released under the BSD (3-clause) license. See LICENSE.
 
-# Pre-class-based system
+# Pre-class-based system (Closing down)
 
 Note for 2025+: This system depends on legacy style functions that behave like objects.
 To use with modern Javascript you will need to assign all classes to globalThis (window, global).
+For this reason, v1.2 will be the last version of jsonpickleJS.  Using custom decoders in JSON.parse
+is probably the best solution going forward in the modern world.
 
 # Python to Javascript and Back
 Python has a remarkable number of ways (for a language that believes there's only one way to do it)
@@ -34,8 +36,8 @@ namespace, such as ``window``, in the Javascript.  For instance, if you have a c
 ``window.myobject.Thing`` in Javascript. The object, and any subobjects, will be created as closely
 as possible in Javascript.
 
-The reverse is also possible, with some caveats. Since Javascript doesn't (until ECMAScript 6) have
-the concept of named classes, each object will need to have a marker somewhere on it saying what
+The reverse is also possible, with some caveats. Since Javascript didn't (until ECMAScript 6) have
+the concept of named classes, each object needed to have a marker somewhere on it saying what
 Python object it should convert back to. The marker is 
 ``o[jsonpickle.tags.PY_CLASS] = 'fully.qualified.ClassName'``. 
 It may be possible in the future to use ``instanceof``
